@@ -1,0 +1,122 @@
+/* Feedback.module.css */
+.mainContainer {
+  display: flex;
+  background-color: #f4f7fa;
+  min-height: 100vh;
+}
+
+.contentWrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.feedbackContent {
+  padding: 2rem;
+}
+
+.feedbackContent h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.tableContainer {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.feedbackTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.feedbackTable th,
+.feedbackTable td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.feedbackTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #34495e;
+  text-transform: uppercase;
+}
+
+.feedbackTable td {
+  font-size: 0.95rem;
+  color: #555;
+  /* --- FIX for Vertical Alignment --- */
+  vertical-align: top; /* Aligns all cell content to the top */
+}
+
+.messageCell {
+    max-width: 400px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.feedbackTable tr:last-child td {
+  border-bottom: none;
+}
+
+.feedbackTable tr:hover {
+  background-color: #f9f9f9;
+}
+
+.noResults {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+/* --- REPLACED PAGINATION STYLES --- */
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px 20px 10px;
+}
+
+.paginationButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.paginationButton {
+  padding: 5px 10px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+.activePage {
+    background-color: #0056b3;
+    color: #fff;
+    border-color: #004494;
+}
+
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
