@@ -142,6 +142,7 @@ const UserManagement = () => {
                                 <th>Phone Number</th>
                                 <th>Email</th>
                                 <th>Total Rating</th>
+                                <th>Status </th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -152,6 +153,7 @@ const UserManagement = () => {
                                     <td>{user.phoneNumber || "N/A"}</td>
                                     <td>{user.email || "N/A"}</td>
                                     <td>{user.totalRating || 0}</td>
+                                    <td>{(user.isVerified)?"Verified":"Not Verified"}</td>
                                     <td>
                                         <button className={styles.actionButton} onClick={() => handleViewDetailsClick(user)}>
                                             <span className={styles.editIcon}>👁️</span>
