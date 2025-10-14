@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  //baseURL: 'https://api.timestringssystem.com',  // Use the actual IP address of your server  // Use the actual IP address of your server
-  baseURL: 'http://localhost:4000',
+  baseURL: 'https://travel.timestringssystem.com/',  // Use the actual IP address of your server  // Use the actual IP address of your server
+  //baseURL: 'http://localhost:4000',
   headers: {
     'Content-Type': 'application/json',
   },
