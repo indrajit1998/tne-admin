@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 const api = axios.create({
-  //baseURL: 'https://api.timestringssystem.com',  // Use the actual IP address of your server  // Use the actual IP address of your server
-  baseURL: process.env.REACT_APP_API_URL,  // Use the actual IP address of your server
+  //baseURL: 'https://api.timestringssystem.com', 
+  baseURL: process.env.REACT_APP_API_URL, 
   headers: {
     'Content-Type': 'application/json',
   },
 });
-// Add a request interceptor to include the auth token in all requests
+
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -32,6 +32,7 @@ export const getTravelerReport = async (page = 1, limit = 30) => {
 export const getSenderReport = async (page = 1, limit = 30) => {
   try {
     const response = await api.get(`api/v1/admin/getSenderReport?page=${page}&limit=${limit}`);
+    console.log("responseof sender report",response);
     return response.data;
   } catch (error) {
     console.error('Error fetching sender report:', error);
@@ -41,7 +42,8 @@ export const getSenderReport = async (page = 1, limit = 30) => {
 
 export const getSenderConsignmentDetails = async (senderPhone) => {
   try {
-    const response = await api.get(`api/v1/report/sender-consignment-details/${senderPhone}`);
+    const response = await api.get(`api/v1/admin/sender-consignment-details/${senderPhone}`);
+    console.log("response of sender consignment details",response);
     return response.data;
   } catch (error) {
     console.error('Error fetching sender consignment details:', error);
@@ -51,26 +53,18 @@ export const getSenderConsignmentDetails = async (senderPhone) => {
 
 export const getTravelerConsignmentDetails = async (travelerPhone) => {
   try {
-    const response = await api.get(`api/v1/report/traveler-consignment-details/${travelerPhone}`);
+    const response = await api.get(`api/v1/admin/traveler-consignment-details/${travelerPhone}`);
+    console.log("response of traveler consignment details",response);
     return response.data;
   } catch (error) {
     console.error('Error fetching traveler consignment details:', error);
     throw error;
   }
 };
-// export const getConsignmentConsolidatedReport = async (page = 1, limit = 30) => {
-//   try {
-//     const response = await api.get(`api/v1/report/getConsignmentsStats?page=${page}&limit=${limit}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error fetching consignment consolidated report:', error);
-//     throw error;
-//   }
-// };
-
 export const getConsolidatedReportData = async () => {
   try {
     const response = await api.get('/api/v1/admin/getConsolidateConsignment');
+    console.log("consolidated data",response);
     return response.data;
   } catch (error) {
     console.error('Error fetching consignment consolidated report:', error);

@@ -847,7 +847,7 @@ const SenderReport = () => {
                                         <td title={consignment.weight || 'N/A'} onClick={() => copyModalToClipboard(consignment.weight, `modal-${consIndex}-weight`)} className={modalCopiedCell === `modal-${consIndex}-weight` ? 'copied' : ''}>{consignment.weight || 'N/A'}</td>
                                         <td title={consignment.receiverName || 'N/A'} onClick={() => copyModalToClipboard(consignment.receiverName, `modal-${consIndex}-receiver`)} className={modalCopiedCell === `modal-${consIndex}-receiver` ? 'copied' : ''}>{consignment.receiverName || 'N/A'}</td>
                                         <td title={consignment.receiverPhone || 'N/A'} onClick={() => copyModalToClipboard(consignment.receiverPhone, `modal-${consIndex}-receiverPhone`)} className={modalCopiedCell === `modal-${consIndex}-receiverPhone` ? 'copied' : ''}>{consignment.receiverPhone || 'N/A'}</td>
-                                        <td className="amount-cell" title={`₹${Number(consignment.earnings || 0).toFixed(2)}`} onClick={() => copyModalToClipboard(Number(consignment.earnings || 0).toFixed(2), `modal-${consIndex}-earnings`)} className={modalCopiedCell === `modal-${consIndex}-earnings` ? 'copied' : ''}>₹{Number(consignment.earnings || 0).toFixed(2)}</td>
+                                        <td title={`₹${Number(consignment.earnings || 0).toFixed(2)}`} onClick={() => copyModalToClipboard(Number(consignment.earnings || 0).toFixed(2), `modal-${consIndex}-earnings`)} className={modalCopiedCell === `modal-${consIndex}-earnings` ? 'copied' : ''}>₹{Number(consignment.earnings || 0).toFixed(2)}</td>
                                       </tr>
                                     ))}
                                   </tbody>

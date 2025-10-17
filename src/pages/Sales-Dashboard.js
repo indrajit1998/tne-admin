@@ -322,9 +322,12 @@
 
 
 
+
+
+
+
 import React, { useEffect, useState, useMemo } from "react";
 import Sidebar from "../Components/Sidebar";
-import Header from "./Header";
 import styles from "./Styles/SalesDashboard.module.css";
 import Api from "../Services/Api";
 import {
@@ -333,11 +336,9 @@ import {
   exportTableToCSV,
 } from "./Utils/download";
 
-
-
 const SalesDashboard = () => {
   const [salesSummary, setSalesSummary] = useState(null);
-  const [regionData, setRegionData] = useState(null); 
+  const [regionData, setRegionData] = useState(null);
   
   const [loading, setLoading] = useState(true);
   const [selectedFormat, setSelectedFormat] = useState("CSV");
@@ -345,12 +346,11 @@ const SalesDashboard = () => {
   const [toDate, setToDate] = useState("");
   const [periodType, setPeriodType] = useState("");
 
-  // Modal state (no changes)
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState([]);
   const [modalType, setModalType] = useState("");
 
-  // Filter handlers (no changes)
+  
   const handlePeriodChange = (value) => {
     setPeriodType(value);
     if (value) {
@@ -371,11 +371,11 @@ const SalesDashboard = () => {
     }
   };
 
-  // Modal handlers (no changes)
+  
   const handleRegionClick = (transactionType) => {
     setShowModal(true);
     setModalType(transactionType);
-    const typeKey = transactionType.toLowerCase().replace(' ', '_');
+    const typeKey = transactionType.toLowerCase().replace(" ", "_");
     if (regionData && regionData[typeKey]) {
       setModalData(regionData[typeKey]);
     } else {
@@ -395,7 +395,7 @@ const SalesDashboard = () => {
         const queryParams = new URLSearchParams();
         if (fromDate) queryParams.append("fromDate", fromDate);
         if (toDate) queryParams.append("toDate", toDate);
-        if (periodType) queryParams.append("periodType", periodType);
+        if (periodType) queryParams.append("period", periodType); 
 
         const res = await Api.get(
           `/api/v1/admin/getSalesReport?${queryParams.toString()}`,
@@ -429,10 +429,11 @@ const SalesDashboard = () => {
   const salesData = useMemo(() => {
     if (!salesSummary) return [];
     
+    
     return [
       { type: "Sender Pay", amount: salesSummary.totalRevenue, count: salesSummary.senderPayCount },
       { type: "Traveller Earning", amount: salesSummary.totalPayouts, count: salesSummary.travellerEarningCount },
-      { type: "Platform Commission", amount: salesSummary.platformCommission, count: salesSummary.platformCommissionCount }
+      // { type: "Platform Commission", amount: salesSummary.platformCommission, count: salesSummary.platformCommissionCount }
     ];
   }, [salesSummary]);
   const overallRevenue = salesSummary ? salesSummary.netRevenue : 0;
@@ -529,7 +530,6 @@ const SalesDashboard = () => {
                     <th>Transaction Type</th>
                     <th>Amount</th>
                     <th>Region</th>
-                    <th>Mode of Travel</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -546,7 +546,6 @@ const SalesDashboard = () => {
                           Click Here
                         </button>
                       </td>
-                      <td>N/A</td>
                     </tr>
                   ))}
                 </tbody>
@@ -563,7 +562,6 @@ const SalesDashboard = () => {
             </div>
           )}
         </div>
-
         {showModal && (
           <div className={styles.modalOverlay} onClick={closeModal}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -581,14 +579,16 @@ const SalesDashboard = () => {
                     <table className={styles.modalTable}>
                       <thead>
                         <tr>
-                          <th>Region</th>
+                          <th>Region (City, State)</th>
+                          <th>Mode of Travel</th>
                           <th>Total Amount</th>
                         </tr>
                       </thead>
                       <tbody>
                         {modalData.map((item, idx) => (
                           <tr key={idx}>
-                            <td>{item.stateWise}</td>
+                            <td>{item.region}</td>
+                            <td>{item.modeOfTravel}</td>
                             <td>Rs {item.totalAmount.toFixed(2)}</td>
                           </tr>
                         ))}
@@ -606,4 +606,3 @@ const SalesDashboard = () => {
 };
 
 export default SalesDashboard;
-
