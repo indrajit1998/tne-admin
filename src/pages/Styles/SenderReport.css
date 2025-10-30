@@ -573,6 +573,16 @@
   transition: background-color 0.3s ease;
 }
 
+
+.consignment-details-table td:nth-child(4),
+.consignment-details-table td:nth-child(5) {
+  white-space: normal;
+  overflow: visible; 
+  text-overflow: clip; 
+  max-width: 160px; 
+  word-break: break-word;
+}
+
 .consignment-modal-table tr {
   transition: all 0.3s ease;
 }

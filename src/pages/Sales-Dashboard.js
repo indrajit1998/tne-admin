@@ -328,6 +328,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import Sidebar from "../Components/Sidebar";
+import Header from "./Header";
 import styles from "./Styles/SalesDashboard.module.css";
 import Api from "../Services/Api";
 import {
@@ -372,16 +373,62 @@ const SalesDashboard = () => {
   };
 
   
+  // const handleRegionClick = (transactionType) => {
+  //   setShowModal(true);
+  //   setModalType(transactionType);
+  //   const typeKey = transactionType.toLowerCase().replace(" ", "_");
+  //   if (regionData && regionData[typeKey]) {
+  //     setModalData(regionData[typeKey]);
+  //   } else {
+  //     setModalData([]);
+  //   }
+  // };
   const handleRegionClick = (transactionType) => {
-    setShowModal(true);
-    setModalType(transactionType);
-    const typeKey = transactionType.toLowerCase().replace(" ", "_");
-    if (regionData && regionData[typeKey]) {
-      setModalData(regionData[typeKey]);
-    } else {
-      setModalData([]);
-    }
-  };
+  setShowModal(true);
+  setModalType(transactionType);
+
+  const typeKey = transactionType.toLowerCase().replace(" ", "_");
+
+  if (regionData && regionData[typeKey]) {
+    const rawData = regionData[typeKey];
+
+    // ✅ Step 1: Group by Region + Mode of Travel
+    const groupedMap = {};
+
+    rawData.forEach((item) => {
+      const region = item.region?.trim() || "Unknown";
+      const mode = item.modeOfTravel?.trim() || "Unknown";
+      const key = `${region}__${mode}`;
+
+      if (!groupedMap[key]) {
+        groupedMap[key] = {
+          region,
+          modeOfTravel: mode,
+          totalAmount: item.totalAmount || 0,
+        };
+      } else {
+        groupedMap[key].totalAmount += item.totalAmount || 0;
+      }
+    });
+
+    // ✅ Step 2: Convert object → array
+    let groupedData = Object.values(groupedMap);
+
+    // ✅ Step 3: Sort first by Region (alphabetically), then by Mode of Travel
+    groupedData.sort((a, b) => {
+      const regionCompare = a.region.localeCompare(b.region);
+      if (regionCompare !== 0) return regionCompare;
+      return a.modeOfTravel.localeCompare(b.modeOfTravel);
+    });
+
+    // ✅ Step 4: Save grouped & sorted data
+    setModalData(groupedData);
+  } else {
+    setModalData([]);
+  }
+};
+
+ 
   const closeModal = () => {
     setShowModal(false);
     setModalData([]);
@@ -433,16 +480,17 @@ const SalesDashboard = () => {
     return [
       { type: "Sender Pay", amount: salesSummary.totalRevenue, count: salesSummary.senderPayCount },
       { type: "Traveller Earning", amount: salesSummary.totalPayouts, count: salesSummary.travellerEarningCount },
-      // { type: "Platform Commission", amount: salesSummary.platformCommission, count: salesSummary.platformCommissionCount }
+      { type: "Platform Commission", amount: salesSummary.platformCommission, count: salesSummary.platformCommissionCount }
     ];
   }, [salesSummary]);
   const overallRevenue = salesSummary ? salesSummary.netRevenue : 0;
 
   return (
     <div className={styles.mainContainer}>
+      
       <Sidebar />
       <div className={styles.contentWrapper}>
-        <div className={styles.filtersContainer}>
+        {/* <div className={styles.filtersContainer}>
           <h3 className={styles.filtersTitle}>Filter Sales Data</h3>
           <div className={styles.filterRow}>
             <div className={styles.filterGroup}>
@@ -507,8 +555,8 @@ const SalesDashboard = () => {
               </div>
             </div>
           </div>
-        </div>
-
+        </div> */}
+          <Header />
         <div className={styles.tableContainer}>
           <div className={styles.tableHeader}>Sales Dashboard Data</div>
 
@@ -606,3 +654,10 @@ const SalesDashboard = () => {
 };
 
 export default SalesDashboard;
+
+
+
+
+
+
+

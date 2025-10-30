@@ -61,6 +61,26 @@ export const getTravelerConsignmentDetails = async (travelerPhone) => {
     throw error;
   }
 };
+
+export const cancelConsignmentById = async (consignmentId) => {
+    try {
+        const response = await api.post(`/api/v1/admin/cancelConsignment/${consignmentId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error cancelling consignment:', error);
+        throw error; // Rethrow to be caught in the component
+    }
+};
+export const cancelTravelById = async (travelId) => {
+    try {
+        const response = await api.post(`/api/v1/admin/cancelTravel/${travelId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error cancelling consignment:', error);
+        throw error; // Rethrow to be caught in the component
+    }
+};
+
 export const getConsolidatedReportData = async () => {
   try {
     const response = await api.get('/api/v1/admin/getConsolidateConsignment');

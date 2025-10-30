@@ -25,6 +25,7 @@ const Dashboard = () => {
                 });
                 if (response.data && response.data.data) {
                     setStats(response.data.data);
+                    console.log("Dashboard Stats:", response.data.data);
                 }
             } catch (error) {
                 console.error("Failed to fetch dashboard stats:", error);
@@ -65,7 +66,8 @@ const Dashboard = () => {
         totalFeedback = 0,
         totalSupport = 0,
         daily = {},
-        monthly = {}
+        monthly = {},
+        refunds={}
     } = stats || {}; 
 
     const allCards = [
@@ -84,6 +86,8 @@ const Dashboard = () => {
         { title: "Monthly Requests", value: monthly.totalRequests ?? 0 },
         { title: "Monthly Accepted", value: monthly.accepted ?? 0 },
         { title: "Monthly Delivered", value: monthly.delivered ?? 0 },
+        { title: "Total Refunds", value: refunds.noOfRefunds ?? 0 },
+        { title: "Refund Amount", value: refunds.totalRefundedAmount ?? 0 },
     ];
 
     return (

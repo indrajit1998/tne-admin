@@ -698,7 +698,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { getTravelerReport, getTravelerConsignmentDetails } from '../Services/Api';
+import { getTravelerReport, getTravelerConsignmentDetails,cancelTravelById } from '../Services/Api';
 import './Styles/TravelerReport.css';
 
 const Box = ({ children, sx, ...props }) => <div style={sx} {...props}>{children}</div>;
@@ -756,6 +756,27 @@ const Alert = ({ severity, children, sx, ...props }) => {
   };
   return <div style={{ padding: '12px 16px', borderRadius: '4px', marginBottom: '16px', ...severityStyles[severity], ...sx }} {...props}>{children}</div>;
 };
+// --- Button Styles (Unchanged) ---
+const buttonStyle = {
+    padding: "5px 10px",
+    margin: "0 5px",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px",
+    fontWeight: "bold",
+  };
+  const cancelButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#f44336", // Red
+    color: "white",
+  };
+  const disabledButtonStyle = {
+    ...cancelButtonStyle,
+    backgroundColor: "#ccc",
+    cursor: "not-allowed",
+  };
+
 
 const TravelerReport = () => {
   const [travelers, setTravelers] = useState([]);
@@ -769,9 +790,14 @@ const TravelerReport = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const[totalEarnings, setTotalEarnings] = useState(0);
+  const[noOfConsignments, setNoOfConsignments] = useState(0);
   const [copiedCell, setCopiedCell] = useState(null);
   const [modalCopiedCell, setModalCopiedCell] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
+
+  const [actionStatus, setActionStatus] = useState({ id: null, message: '', type: '' });
   const recordsPerPage = 30;
 
   useEffect(() => {
@@ -855,6 +881,9 @@ const TravelerReport = () => {
     try {
       const detailsResponse = await getTravelerConsignmentDetails(travelerPhone);
       const consignments = detailsResponse.data || [];
+      console.log('Consignment details received:', consignments);
+      setTotalEarnings(detailsResponse.totalAcceptedEarnings|| 0);
+      setNoOfConsignments(detailsResponse.count || 0);
       setSelectedConsignments(consignments);
       setShowModal(true);
     } catch (err) {
@@ -865,6 +894,194 @@ const TravelerReport = () => {
       setLoadingDetails(false);
     }
   };
+
+//     const handleCancelConsignment = async (travelId) => {
+//     // Add a confirmation dialog
+//     if (!window.confirm("Are you sure you want to cancel this consignment?")) {
+//       return;
+//     }
+//   
+//     setCancellingId(travelId); // Set loading state for this specific button
+//     setActionStatus({ id: travelId, message: 'Cancelling...', type: 'loading' });
+//     try {
+//       // Call the API
+//       const response = await cancelTravelById(travelId);
+//   
+//       if (response.success) {
+//         setActionStatus({ id: travelId, message: 'Cancelled!', type: 'success' });
+//         alert('Consignment cancelled successfully.');
+        
+//         // --- THIS IS THE FIX ---
+//         // Use the phone number from the 'selectedTraveler' state variable
+//         if (selectedTraveler && selectedTraveler.phone) {
+//             // Refresh the consignment details to show the change
+//             setLoadingDetails(true);
+//             try {
+//                 const detailsResponse = await getTravelerConsignmentDetails(selectedTraveler.phone);
+//                 setSelectedConsignments(detailsResponse.data || []);
+//                 setTotalEarnings(detailsResponse.totalAcceptedEarnings || 0);
+//                 setNoOfConsignments(detailsResponse.count || 0);
+//             } catch (err) {
+//                 console.error("Error re-fetching consignment details:", err);
+//                 setActionStatus({ id: 'modal', message: 'Could not re-fetch details.', type: 'error' });
+//             } finally {
+//                 setLoadingDetails(false);
+//             }
+//         }
+        
+//         // Also re-fetch the main report to update the aggregates
+//         fetchTravelerData(); 
+//       } else {
+//         throw new Error(response.message || "Failed to cancel");
+//       }
+//     } catch (err) {
+//       console.error("Failed to cancel consignment:", err);
+//       setActionStatus({ id: travelId, message: err.message || 'Failed', type: 'error' });
+//     } finally {
+//       setCancellingId(null); // Remove loading state
+//       // Clear status message after 3 seconds
+//       setTimeout(() => setActionStatus({ id: null, message: '', type: '' }), 3000);
+//     }
+//   };
+
+const handleCancelConsignment = async (travelId) => {
+  // 🟦 Step 1: Custom confirmation modal
+  const confirmationBox = document.createElement("div");
+  confirmationBox.innerHTML = `
+  <div style="
+    background-color: #ffffffff;
+    border: 2px solid #141415ff;
+    border-radius: 10px;
+    padding: 20px 25px;
+    width: 340px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    font-family: 'Segoe UI', sans-serif;
+    color: #ffffffff;
+    position: fixed;
+    margin: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    text-align: center;
+  ">
+    <h3 style="margin-top: 0; color: #1565c0;">Cancel Travel Consignment?</h3>
+    <p>Are you sure you want to cancel travelId: <b>${travelId}</b>?</p>
+    <div style="margin-top: 15px;">
+      <button id="confirmCancel" style="padding:8px 8px 8px 16px;margin:10px 10px; background-color: #2196f3; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Yes, Cancel</button>
+      <button id="cancelCancel" style="padding: 8px 8px 8px 16px; margin:10px 10px;background-color: #f44336; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">No</button>
+    </div>
+  </div>
+  `;
+  document.body.appendChild(confirmationBox);
+
+  const confirmButton = confirmationBox.querySelector("#confirmCancel");
+  const cancelButton = confirmationBox.querySelector("#cancelCancel");
+
+  const waitForUserChoice = () => {
+    return new Promise((resolve) => {
+      confirmButton.onclick = () => {
+        confirmationBox.remove();
+        resolve(true);
+      };
+      cancelButton.onclick = () => {
+        confirmationBox.remove();
+        resolve(false);
+      };
+    });
+  };
+
+  const confirmed = await waitForUserChoice();
+  if (!confirmed) return;
+
+  // 🟨 Step 2: Proceed with your existing logic
+  setCancellingId(travelId);
+  setActionStatus({ id: travelId, message: 'Cancelling...', type: 'loading' });
+  try {
+    const response = await cancelTravelById(travelId);
+
+    if (response.success) {
+      setActionStatus({ id: travelId, message: 'Cancelled!', type: 'success' });
+
+      // 🟩 Success modal
+      const successBox = document.createElement("div");
+      successBox.innerHTML = `
+      <div style="
+        background-color: #ffffffff;
+        border: 2px solid #4caf50;
+        border-radius: 10px;
+        padding: 20px 25px;
+        width: 340px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+        font-family: 'Segoe UI', sans-serif;
+        color: #141415ff;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        text-align: center;
+      ">
+        <h3 style="margin-top: 0; color: #2e7d32;">Travel Consignment Cancelled</h3>
+        <p><b>Travel ID: ${travelId}</b> was cancelled successfully.</p>
+        <button id="closeSuccess" style="padding: 8px 16px; background-color: #4caf50; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">OK</button>
+      </div>`;
+      document.body.appendChild(successBox);
+      successBox.querySelector("#closeSuccess").onclick = () => successBox.remove();
+
+      // your existing data refresh logic remains unchanged
+      if (selectedTraveler && selectedTraveler.phone) {
+        setLoadingDetails(true);
+        try {
+          const detailsResponse = await getTravelerConsignmentDetails(selectedTraveler.phone);
+          setSelectedConsignments(detailsResponse.data || []);
+          setTotalEarnings(detailsResponse.totalAcceptedEarnings || 0);
+          setNoOfConsignments(detailsResponse.count || 0);
+        } catch (err) {
+          console.error("Error re-fetching consignment details:", err);
+          setActionStatus({ id: 'modal', message: 'Could not re-fetch details.', type: 'error' });
+        } finally {
+          setLoadingDetails(false);
+        }
+      }
+      fetchTravelerData();
+    } else {
+      throw new Error(response.message || "Failed to cancel");
+    }
+  } catch (err) {
+    console.error("Failed to cancel consignment:", err);
+    setActionStatus({ id: travelId, message: err.message || 'Failed', type: 'error' });
+
+    // 🔴 Error modal
+    const errorBox = document.createElement("div");
+    errorBox.innerHTML = `
+    <div style="
+      background-color: #ffffffff;
+      border: 2px solid #e53935;
+      border-radius: 10px;
+      padding: 20px 25px;
+      width: 340px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+      font-family: 'Segoe UI', sans-serif;
+      color: #141415ff;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      text-align: center;
+    ">
+      <h3 style="margin-top: 0; color: #c62828;">Cancellation Failed</h3>
+      <p>Unable to cancel travel ID <b>${travelId}</b>. Please try again.</p>
+      <button id="closeError" style="padding: 8px 16px; background-color: #e53935; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Close</button>
+    </div>`;
+    document.body.appendChild(errorBox);
+    errorBox.querySelector("#closeError").onclick = () => errorBox.remove();
+  } finally {
+    setCancellingId(null);
+    setTimeout(() => setActionStatus({ id: null, message: '', type: '' }), 3000);
+  }
+};
 
   const closeModal = () => {
     setShowModal(false);
@@ -933,7 +1150,7 @@ const TravelerReport = () => {
     );
   }
 
-  return (
+return (
     <div className="traveler-report-container">
       <div className="report-header">
         <Typography variant="h4">Traveler Report</Typography>
@@ -1018,50 +1235,162 @@ const TravelerReport = () => {
         <div className="modal-overlay show" onClick={closeModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <Typography variant="h6">Consignment Details for {selectedTraveler?.name}</Typography>
+              <Typography variant="h6">Travel & Consignment Details for {selectedTraveler?.name}</Typography>
               <button className="close-btn" onClick={closeModal}>×</button>
             </div>
             <div className="modal-body">
               {loadingDetails ? (
                 <div className="loading-details"><CircularProgress /><Typography variant="body2">Loading details...</Typography></div>
-              ) : selectedConsignments.length === 0 ? (
+              ) : (actionStatus.id === 'modal' && actionStatus.type === 'error') ? (
+                            <Alert severity="error">{actionStatus.message}</Alert>
+              )  : selectedConsignments.length === 0 ? (
                 <div className="no-consignments-message"><Typography variant="body2">No consignment details available.</Typography></div>
               ) : (
                 <div>
                   <div className="consignment-summary">
-                    <div><Typography variant="subtitle2">Total Consignments</Typography><Typography variant="h6">{selectedConsignments.length}</Typography></div>
-                    <div><Typography variant="subtitle2">Total Earnings</Typography><Typography variant="h6">{formatCurrency(selectedConsignments.reduce((sum, c) => sum + (c.earnings || 0), 0))}</Typography></div>
+                        {/* Summary content can stay the same */}
+                        <div><Typography variant="subtitle2">Total Consignments</Typography><Typography variant="h6">{noOfConsignments}</Typography></div>
+                        <div><Typography variant="subtitle2">Total Earnings</Typography><Typography variant="h6">{totalEarnings}</Typography></div>
                   </div>
-                  <div className="table-container">
-                    <table className="consignment-modal-table">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Status</th>
-                          <th>Payment</th>
-                          <th>Weight</th>
-                          <th>Pickup</th>
-                          <th>Drop</th>
-                          <th>Date</th>
-                          <th>Earnings</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedConsignments.map((c, i) => (
-                          <tr key={c.consignmentId || i}>
-                            <td title={c.consignmentId} onClick={() => copyModalToClipboard(c.consignmentId, `m-${i}-id`)} className={`copyable-cell ${modalCopiedCell === `m-${i}-id` ? 'copied' : ''}`}>{c.consignmentId}</td>
-                            <td><Chip label={c.status} color={getStatusColor(c.status)} size="small" /></td>
-                            <td><Chip label={c.paymentStatus} color={getStatusColor(c.paymentStatus)} size="small" /></td>
-                            <td title={c.weight} onClick={() => copyModalToClipboard(c.weight, `m-${i}-w`)} className={`copyable-cell ${modalCopiedCell === `m-${i}-w` ? 'copied' : ''}`}>{c.weight}</td>
-                            <td title={c.pickup} onClick={() => copyModalToClipboard(c.pickup, `m-${i}-p`)} className={`copyable-cell ${modalCopiedCell === `m-${i}-p` ? 'copied' : ''}`}>{c.pickup}</td>
-                            <td title={c.drop} onClick={() => copyModalToClipboard(c.drop, `m-${i}-d`)} className={`copyable-cell ${modalCopiedCell === `m-${i}-d` ? 'copied' : ''}`}>{c.drop}</td>
-                            <td>{formatDate(c.travelDate)}</td>
-                            <td className="amount-cell">{formatCurrency(c.earnings)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      <div className="table-container">
+                        <table className="consignment-modal-table">
+                          <thead>
+                            <tr>
+                              <th>Travel ID</th>
+                              <th>Consignment ID</th>
+                              <th>Starting Location</th>
+                              <th>Ending Location</th>
+                              <th>Mode of Travel</th>
+                              <th>Travel Status</th>
+                              <th>Payment Status</th>
+                              <th>Consignment Status</th>
+                              <th>Date of Sending</th>
+                              <th>Weight</th>
+                              <th>Receiver Name</th>
+                              <th>Receiver Phone</th>
+                              <th>Earnings</th>
+                               <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {selectedConsignments.map((c, i) => {
+                                    const travelStatus = String(c.travelStatus || '').toLowerCase();
+                                    const consignmentStatus = String(c.consignmentStatus || '').toLowerCase();
+                                    const hasConsignments = Array.isArray(c.consignments) && c.consignments.length > 0;
+
+                                    const showCancel = (
+                                      ['ongoing', 'upcoming'].includes(travelStatus) &&
+                                      (
+                                        // Case 1: consignments present — check both statuses
+                                        (hasConsignments && ['cancelled', 'assigned', 'requested'].includes(consignmentStatus)) ||
+                                        // Case 2: no consignments — check only travelStatus
+                                        (!hasConsignments)
+                                      )
+                                    );
+
+                                    const isCancelling = cancellingId === c.travelId;
+                            return(
+                              <tr key={c.travelId || i}>
+                                <td
+                                  title={c.travelId}
+                                  onClick={() => copyModalToClipboard(c.travelId, `m-${i}-id`)}
+                                  className={`copyable-cell ${modalCopiedCell === `m-${i}-id` ? 'copied' : ''}`}
+                                >
+                                  {c.travelId || 'N/A'} 
+                                </td>
+                                <td
+                                  title={c.consignmentId}
+                                  onClick={() => copyModalToClipboard(c.consignmentId, `m-${i}-id`)}
+                                  className={`copyable-cell ${modalCopiedCell === `m-${i}-id` ? 'copied' : ''}`}
+                                >
+                                  {c.consignmentId || 'N/A'} {/* Data: consignmentId */}
+                                </td>
+                                <td
+                                  title={c.startingLocation} /* Data: startingLocation from backend */
+                                  onClick={() => copyModalToClipboard(c.startingLocation, `m-${i}-p`)}
+                                  className={`copyable-cell ${modalCopiedCell === `m-${i}-p` ? 'copied' : ''}`}
+                                >
+                                  {c.startingLocation || 'N/A'}
+                                </td>
+                                <td
+                                  title={c.endingLocation} /* Data: endingLocation from backend */
+                                  onClick={() => copyModalToClipboard(c.endingLocation, `m-${i}-d`)}
+                                  className={`copyable-cell ${modalCopiedCell === `m-${i}-d` ? 'copied' : ''}`}
+                                >
+                                  {c.endingLocation || 'N/A'}
+                                </td>
+                                 <td
+                                    title={c.modeOfTravel} 
+                                    onClick={() => copyModalToClipboard(c.modeOfTravel, `m-${i}-mode`)}
+                                    className={`copyable-cell ${modalCopiedCell === `m-${i}-mode` ? 'copied' : ''}`}
+                                >
+                                    {c.modeOfTravel || 'N/A'}
+                                </td>
+                                <td>
+                                  <Chip label={c.travelStatus} color={getStatusColor(c.travelStatus)} size="small" /> 
+                                </td>
+                                <td>
+                                  <Chip label={c.paymentStatus} color={getStatusColor(c.paymentStatus)} size="small" /> 
+                                </td>
+                                 <td>
+                                  <Chip label={c.consignmentStatus} color={getStatusColor(c.consignmentStatus)} size="small" /> 
+                                </td>
+                                <td
+                                    title={formatDate(c.dateOfSending)} 
+                                    onClick={() => copyModalToClipboard(formatDate(c.dateOfSending), `m-${i}-date`)}
+                                    className={`copyable-cell ${modalCopiedCell === `m-${i}-date` ? 'copied' : ''}`}
+                                >
+                                    {formatDate(c.dateOfSending)}
+                                </td>
+                                <td
+                                  title={c.weight}
+                                  onClick={() => copyModalToClipboard(c.weight, `m-${i}-w`)}
+                                  className={`copyable-cell ${modalCopiedCell === `m-${i}-w` ? 'copied' : ''}`}
+                                >
+                                  {c.weight || 'N/A'}
+                                </td>
+                                <td
+                                    title={c.receiverName} 
+                                    onClick={() => copyModalToClipboard(c.receiverName, `m-${i}-receiver`)}
+                                    className={`copyable-cell ${modalCopiedCell === `m-${i}-receiver` ? 'copied' : ''}`}
+                                >
+                                    {c.receiverName || 'N/A'}
+                                </td>
+                                <td
+                                    title={c.receiverPhone} 
+                                    onClick={() => copyModalToClipboard(c.receiverPhone, `m-${i}-receiverPhone`)}
+                                    className={`copyable-cell ${modalCopiedCell === `m-${i}-receiverPhone` ? 'copied' : ''}`}
+                                >
+                                    {c.receiverPhone || 'N/A'}
+                                </td>
+                                <td className="amount-cell">{formatCurrency(c.earnings)}</td> 
+                                 <td style={{ minWidth: '120px', textAlign: 'center' }}>
+                                  
+                                      {showCancel && (
+                                        <button
+                                          style={isCancelling ? disabledButtonStyle : cancelButtonStyle}
+                                          onClick={() => handleCancelConsignment(c.travelId)}
+                                          disabled={isCancelling}
+                                        >
+                                          {isCancelling ? '....' : 'Cancel'}
+                                        </button>
+                                      )}
+                                      {actionStatus.id === c.travelId && (
+                                                <span style={{ 
+                                                    display: 'block', 
+                                                    fontSize: '11px', 
+                                                    marginTop: '4px', 
+                                                    color: actionStatus.type === 'error' ? '#721c24' : (actionStatus.type === 'success' ? '#155724' : '#0c5460')
+                                                }}>
+                                                    {actionStatus.message}
+                                                </span>
+                                            )}
+                                 </td>         
+                              </tr>);
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                 </div>
               )}
             </div>
@@ -1069,7 +1398,7 @@ const TravelerReport = () => {
         </div>
       )}
     </div>
-  );
-};
+)
+}
 
 export default TravelerReport;

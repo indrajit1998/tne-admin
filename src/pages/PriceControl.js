@@ -8,6 +8,7 @@ const PriceControl = () => {
     TE: 0,
     deliveryFee: 0,
     margin: 0,
+    gst: 0,
     weightRateTrain: 0,
     distanceRateTrain: 0,
     baseFareTrain: 0,
@@ -36,7 +37,8 @@ const PriceControl = () => {
         const newPricing = {
           TE: config.TE || 0,
           deliveryFee: config.deliveryFee || 0,
-          margin: config.margin || 0,
+          margin: (config.margin || 0)*100,
+          gst: config.gst || 0,
           weightRateTrain: config.weightRateTrain || 0,
           distanceRateTrain: config.distanceRateTrain || 0,
           baseFareTrain: config.baseFareTrain || 0,
@@ -73,7 +75,8 @@ const PriceControl = () => {
     const payload = {
       TE: parseFloat(modalInputs.TE),
       deliveryFee: parseFloat(modalInputs.deliveryFee),
-      margin: parseFloat(modalInputs.margin),
+      margin: parseFloat(modalInputs.margin)/100,
+      gst: parseFloat(modalInputs.gst),
       weightRateTrain: parseFloat(modalInputs.weightRateTrain),
       distanceRateTrain: parseFloat(modalInputs.distanceRateTrain),
       baseFareTrain: parseFloat(modalInputs.baseFareTrain),
@@ -114,18 +117,29 @@ const PriceControl = () => {
   };
 
   // Helper function to format field names for display
-  const formatFieldName = (key) => {
-    let name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    // --- CORRECTED FIELD NAMES ---
-    if (key === 'weightRateFlight') return 'Weight Rate (Airplane)';
-    if (key === 'distanceRateFlight') return 'Distance Rate (Airplane)';
-    if (key === 'baseFareFlight') return 'Base Fare (Airplane)';
-    if (key === 'weightRateTrain') return 'Weight Rate (Train)';
-    if (key === 'distanceRateTrain') return 'Distance Rate (Train)';
-    if (key === 'baseFareTrain') return 'Base Fare (Train)';
-    return name;
-  };
+  // const formatFieldName = (key) => {
+  //   let name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+  //   // --- CORRECTED FIELD NAMES ---
+  //   if (key === 'weightRateFlight') return 'Weight Rate (Airplane)';
+  //   if (key === 'distanceRateFlight') return 'Distance Rate (Airplane)';
+  //   if (key === 'baseFareFlight') return 'Base Fare (Airplane)';
+  //   if (key === 'weightRateTrain') return 'Weight Rate (Train)';
+  //   if (key === 'distanceRateTrain') return 'Distance Rate (Train)';
+  //   if (key === 'baseFareTrain') return 'Base Fare (Train)';
+  //   return name;
+  // };
 
+  const formatFieldName = (key) => {
+    let name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    if (key === 'gst') return 'GST (%)'; // --- 4. ADDED GST label ---
+    if (key === 'weightRateFlight') return 'Weight Rate (Airplane)';
+    if (key === 'distanceRateFlight') return 'Distance Rate (Airplane)';
+    if (key === 'baseFareFlight') return 'Base Fare (Airplane)';
+    if (key === 'weightRateTrain') return 'Weight Rate (Train)';
+    if (key === 'distanceRateTrain') return 'Distance Rate (Train)';
+    if (key === 'baseFareTrain') return 'Base Fare (Train)';
+    return name;
+  };
   return (
     <div className={styles.adminWrapper}>
       <Sidebar />
@@ -140,7 +154,7 @@ const PriceControl = () => {
               <div key={key} className={styles.pricingItem}>
                 <span className={styles.pricingLabel}>{formatFieldName(key)}</span>
                 <span className={styles.pricingValue}>
-                  {key === 'margin' ? `${(parseFloat(value)).toFixed(1)}%` : parseFloat(value).toFixed(2)}
+                  {key === 'margin' || key === 'gst'? `${(parseFloat(value)).toFixed(1)}%` : parseFloat(value).toFixed(2)}
                 </span>
               </div>
             ))}

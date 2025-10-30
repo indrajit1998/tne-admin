@@ -31,7 +31,8 @@ const UserManagement = () => {
                 const response = await api.get(`/api/v1/admin/manageUsers?page=${currentPage}&limit=${usersPerPage}&search=${searchQuery}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
-                setUsers(response.data.data);
+                setUsers(response.data.data);   
+                console.log("Fetched users:", response.data.data);
                 setTotalUsers(response.data.totalCount);
                 setTotalPages(response.data.totalPages);
             } catch (error) {
@@ -138,10 +139,10 @@ const UserManagement = () => {
                     <table id="user-table" className={styles.table}>
                         <thead>
                             <tr>
-                                <th>Traveller</th>
+                                <th>User</th>
                                 <th>Phone Number</th>
                                 <th>Email</th>
-                                <th>Total Rating</th>
+                                <th>Rating</th>
                                 <th>Status </th>
                                 <th>Actions</th>
                             </tr>
@@ -152,8 +153,11 @@ const UserManagement = () => {
                                     <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A'}</td>
                                     <td>{user.phoneNumber || "N/A"}</td>
                                     <td>{user.email || "N/A"}</td>
-                                    <td>{user.totalRating || 0}</td>
-                                    <td>{(user.isVerified)?"Verified":"Not Verified"}</td>
+                                    <td>
+                                        {user.rating ? user.rating.toFixed(1) : '0.0'}
+                                        {user.reviewCount ? ` (${user.reviewCount})` : ''}
+                                    </td>
+                                    <td>{(user.isKYCVerified)?"Verified":"Not Verified"}</td>
                                     <td>
                                         <button className={styles.actionButton} onClick={() => handleViewDetailsClick(user)}>
                                             <span className={styles.editIcon}>👁️</span>
@@ -207,7 +211,7 @@ const UserManagement = () => {
                                         <p><strong>Name:</strong> {`${selectedUser.user?.firstName || ''} ${selectedUser.user?.lastName || ''}`.trim() || 'N/A'}</p>
                                         <p><strong>Email:</strong> {selectedUser.user?.email || "N/A"}</p>
                                         <p><strong>Phone:</strong> {selectedUser.user?.phoneNumber || "N/A"}</p>
-                                        <p><strong>Total Rating:</strong> {selectedUser.user?.totalRating || 0}</p>
+                                        <p><strong>Total Rating:</strong> {selectedUser.user?.rating || 0}</p>
                                         <p><strong>User ID:</strong> {selectedUser.user?._id || "N/A"}</p>
                                     </div>
 
