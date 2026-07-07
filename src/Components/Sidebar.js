@@ -231,6 +231,26 @@ const Sidebar = () => {
         </li>
         <li className={styles.sidebarMenuItem}>
           <Link
+            to="/payments"
+            className={`${styles.sidebarLink} ${
+              location.pathname === "/payments" ? styles.sidebarLinkActive : ""
+            }`}
+          >
+            <FaMoneyBillAlt className={styles.sidebarIcon} /> Payouts
+          </Link>
+        </li>
+        <li className={styles.sidebarMenuItem}>
+          <Link
+            to="/refunds"
+            className={`${styles.sidebarLink} ${
+              location.pathname === "/refunds" ? styles.sidebarLinkActive : ""
+            }`}
+          >
+            <FaMoneyBillWave className={styles.sidebarIcon} /> Refunds
+          </Link>
+        </li>
+        <li className={styles.sidebarMenuItem}>
+          <Link
             to="/reports"
             className={`${styles.sidebarLink} ${
               location.pathname === "/reports" ? styles.sidebarLinkActive : ""

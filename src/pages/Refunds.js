@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from "../Components/Sidebar";
 import Header from "./Header";
 import styles from "./Styles/UserDetails.module.css";
 import api from '../Services/Api';
 
-const Payments = () => {
-    const [payouts, setPayouts] = useState([]);
+const Refunds = () => {
+    const location = useLocation();
+    const [refunds, setRefunds] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [totalPayouts, setTotalPayouts] = useState(0);
+    const [totalRefunds, setTotalRefunds] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [statusFilter, setStatusFilter] = useState("");
@@ -17,53 +19,65 @@ const Payments = () => {
     const [pendingCount, setPendingCount] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
 
-    // Payout Modal state
+    // Refund Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedPayout, setSelectedPayout] = useState(null);
+    const [selectedRefund, setSelectedRefund] = useState(null);
     const [modalStatus, setModalStatus] = useState("pending");
     const [modalComment, setModalComment] = useState("");
     const [modalSubmitting, setModalSubmitting] = useState(false);
 
+    const refundsPerPage = 10;
 
-    const payoutsPerPage = 10;
-
-    const fetchPayouts = async () => {
+    const fetchRefunds = async () => {
         setLoading(true);
         try {
             const statusParam = statusFilter ? `&status=${statusFilter}` : "";
             const response = await api.get(
-                `/api/v1/admin/payouts?page=${currentPage}&limit=${payoutsPerPage}${statusParam}`,
+                `/api/v1/admin/refunds?page=${currentPage}&limit=${refundsPerPage}${statusParam}`,
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
             
             const resultData = response.data.data;
-            setPayouts(resultData.data || []);
-            setTotalPayouts(resultData.total || 0);
+            const fetchedRefunds = resultData.data || [];
+            setRefunds(fetchedRefunds);
+            setTotalRefunds(resultData.total || 0);
             setTotalPages(resultData.totalPages || 1);
+
+            // Auto-open modal if openRefund param exists
+            const searchParams = new URLSearchParams(window.location.search);
+            const openRefundId = searchParams.get('openRefund');
+            if (openRefundId) {
+                const targetRefund = fetchedRefunds.find(r => r.refundId === openRefundId || r._id === openRefundId);
+                if (targetRefund) {
+                    // Slight delay to ensure state sets properly
+                    setTimeout(() => openUpdateModal(targetRefund), 100);
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
 
             // Fetch summary stats
             const statsResponse = await api.get(
-                `/api/v1/admin/payouts?limit=1000`,
+                `/api/v1/admin/refunds?limit=1000`,
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
-            const allPayouts = statsResponse.data.data.data || [];
-            setPendingCount(allPayouts.filter(p => p.status === "pending").length);
-            setTotalAmount(allPayouts.reduce((acc, curr) => acc + (curr.amount || 0), 0));
+            const allRefunds = statsResponse.data.data.data || [];
+            setPendingCount(allRefunds.filter(r => r.status === "pending").length);
+            setTotalAmount(allRefunds.reduce((acc, curr) => acc + (curr.amount || 0), 0));
         } catch (error) {
-            console.error('Error fetching payouts:', error);
+            console.error('Error fetching refunds:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchPayouts();
+        fetchRefunds();
     }, [currentPage, statusFilter]);
 
     const handleExport = async () => {
         try {
             const statusParam = statusFilter ? `?status=${statusFilter}` : "";
-            const response = await api.get(`/api/v1/admin/payouts/export${statusParam}`, {
+            const response = await api.get(`/api/v1/admin/refunds/export${statusParam}`, {
                 responseType: 'blob',
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
@@ -71,48 +85,47 @@ const Payments = () => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `payouts_${statusFilter || 'all'}_export.csv`;
+            a.download = `refunds_${statusFilter || 'all'}_export.csv`;
             document.body.appendChild(a);
             a.click();
             a.remove();
         } catch (error) {
-            console.error('Error exporting payouts:', error);
-            alert('Failed to export payouts.');
+            console.error('Error exporting refunds:', error);
+            alert('Failed to export refunds.');
         }
     };
 
-    const openUpdateModal = (payout) => {
-        setSelectedPayout(payout);
-        setModalStatus(payout.status);
-        setModalComment(payout.comment || "");
+    const openUpdateModal = (refund) => {
+        setSelectedRefund(refund);
+        setModalStatus(refund.status);
+        setModalComment(refund.comment || "");
         setIsModalOpen(true);
     };
 
     const handleUpdateStatus = async (e) => {
         e.preventDefault();
-        if (!selectedPayout) return;
+        if (!selectedRefund) return;
         setModalSubmitting(true);
         try {
             await api.patch(
-                `/api/v1/admin/payouts/${selectedPayout._id}/status`,
+                `/api/v1/admin/refunds/${selectedRefund._id}/status`,
                 { status: modalStatus, comment: modalComment },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
             setIsModalOpen(false);
-            setSelectedPayout(null);
-            fetchPayouts();
+            setSelectedRefund(null);
+            fetchRefunds();
         } catch (error) {
-            console.error('Error updating payout status:', error);
-            alert('Failed to update payout status. Please try again.');
+            console.error('Error updating refund status:', error);
+            alert('Failed to update refund status. Please try again.');
         } finally {
             setModalSubmitting(false);
         }
     };
 
-
     const getStatusColor = (status) => {
         switch (status) {
-            case 'paid': return '#2ecc71';
+            case 'processed': return '#2ecc71';
             case 'pending': return '#f39c12';
             case 'initiated': return '#3498db';
             case 'rejected': return '#e74c3c';
@@ -120,14 +133,14 @@ const Payments = () => {
         }
     };
 
-    const filteredPayouts = payouts.filter(payout => {
+    const filteredRefunds = refunds.filter(refund => {
         if (!searchQuery) return true;
         const query = searchQuery.toLowerCase();
-        const userName = payout.user ? `${payout.user.firstName || ''} ${payout.user.lastName || ''}`.toLowerCase() : '';
-        const phone = payout.user?.phoneNumber ? payout.user.phoneNumber.toLowerCase() : '';
-        const email = payout.user?.email ? payout.user.email.toLowerCase() : '';
-        const holder = payout.bankDetails?.accountHolderName ? payout.bankDetails.accountHolderName.toLowerCase() : '';
-        const bankName = payout.bankDetails?.bankName ? payout.bankDetails.bankName.toLowerCase() : '';
+        const userName = refund.user ? `${refund.user.firstName || ''} ${refund.user.lastName || ''}`.toLowerCase() : '';
+        const phone = refund.user?.phoneNumber ? refund.user.phoneNumber.toLowerCase() : '';
+        const email = refund.user?.email ? refund.user.email.toLowerCase() : '';
+        const holder = refund.bankDetails?.accountHolderName ? refund.bankDetails.accountHolderName.toLowerCase() : '';
+        const bankName = refund.bankDetails?.bankName ? refund.bankDetails.bankName.toLowerCase() : '';
         return userName.includes(query) || 
                phone.includes(query) || 
                email.includes(query) || 
@@ -143,15 +156,15 @@ const Payments = () => {
 
                 <div className={styles.topSection}>
                     <div className={styles.card} style={{ flex: 1 }}>
-                        <h3>Total Payout Requests</h3>
-                        <p>{totalPayouts}</p>
+                        <h3>Total Refund Requests</h3>
+                        <p>{totalRefunds}</p>
                     </div>
                     <div className={styles.card} style={{ flex: 1 }}>
-                        <h3>Pending Requests</h3>
+                        <h3>Pending Refunds</h3>
                         <p>{pendingCount}</p>
                     </div>
                     <div className={styles.card} style={{ flex: 1 }}>
-                        <h3>Total Payout Amount</h3>
+                        <h3>Total Refund Amount</h3>
                         <p>₹{totalAmount.toLocaleString()}</p>
                     </div>
                 </div>
@@ -170,7 +183,7 @@ const Payments = () => {
                                 <option value="">All Statuses</option>
                                 <option value="pending">Pending</option>
                                 <option value="initiated">Initiated</option>
-                                <option value="paid">Paid</option>
+                                <option value="processed">Processed</option>
                                 <option value="rejected">Rejected</option>
                             </select>
                             <span className={styles.dropdownArrow}>▼</span>
@@ -184,12 +197,12 @@ const Payments = () => {
                 </div>
 
                 {loading ? (
-                    <div className={styles.loader}>Loading Payouts...</div>
+                    <div className={styles.loader}>Loading Refunds...</div>
                 ) : (
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>User</th>
+                                <th>User (Sender)</th>
                                 <th>Phone / Email</th>
                                 <th>Bank Details</th>
                                 <th>Amount</th>
@@ -199,30 +212,30 @@ const Payments = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredPayouts.length > 0 ? (
-                                filteredPayouts.map((payout) => (
-                                    <tr key={payout._id} className={styles.tableTr}>
+                            {filteredRefunds.length > 0 ? (
+                                filteredRefunds.map((refund) => (
+                                    <tr key={refund._id} className={styles.tableTr}>
                                         <td>
-                                            {payout.user ? `${payout.user.firstName || ''} ${payout.user.lastName || ''}`.trim() : 'N/A'}
+                                            {refund.user ? `${refund.user.firstName || ''} ${refund.user.lastName || ''}`.trim() : 'N/A'}
                                         </td>
                                         <td>
-                                            <div>{payout.user?.phoneNumber || 'N/A'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{payout.user?.email || ''}</div>
+                                            <div>{refund.user?.phoneNumber || 'N/A'}</div>
+                                            <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{refund.user?.email || ''}</div>
                                         </td>
                                         <td>
-                                            {payout.bankDetails ? (
+                                            {refund.bankDetails ? (
                                                 <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
-                                                    <div><strong>Holder:</strong> {payout.bankDetails.accountHolderName || 'N/A'}</div>
-                                                    <div><strong>Bank:</strong> {payout.bankDetails.bankName || 'N/A'}</div>
-                                                    <div><strong>A/C:</strong> {payout.bankDetails.accountNumber || 'N/A'}</div>
-                                                    <div><strong>IFSC:</strong> {payout.bankDetails.ifscCode || 'N/A'}</div>
+                                                    <div><strong>Holder:</strong> {refund.bankDetails.accountHolderName || 'N/A'}</div>
+                                                    <div><strong>Bank:</strong> {refund.bankDetails.bankName || 'N/A'}</div>
+                                                    <div><strong>A/C:</strong> {refund.bankDetails.accountNumber || 'N/A'}</div>
+                                                    <div><strong>IFSC:</strong> {refund.bankDetails.ifscCode || 'N/A'}</div>
                                                 </div>
                                             ) : 'N/A'}
                                         </td>
-                                        <td><strong>₹{payout.amount}</strong></td>
+                                        <td><strong>₹{refund.amount}</strong></td>
                                         <td>
                                             <span style={{
-                                                backgroundColor: getStatusColor(payout.status),
+                                                backgroundColor: getStatusColor(refund.status),
                                                 color: '#fff',
                                                 padding: '4px 8px',
                                                 borderRadius: '12px',
@@ -230,15 +243,15 @@ const Payments = () => {
                                                 fontWeight: 'bold',
                                                 textTransform: 'uppercase'
                                             }}>
-                                                {payout.status}
+                                                {refund.status}
                                             </span>
                                         </td>
-                                        <td>{payout.comment || '-'}</td>
+                                        <td>{refund.comment || '-'}</td>
                                         <td>
                                             <button
                                                 className={styles.downloadButton}
                                                 style={{ padding: '4px 8px', fontSize: '0.8rem' }}
-                                                onClick={() => openUpdateModal(payout)}
+                                                onClick={() => openUpdateModal(refund)}
                                             >
                                                 Update Status
                                             </button>
@@ -247,7 +260,7 @@ const Payments = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No payouts found.</td>
+                                    <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No refunds found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -284,11 +297,11 @@ const Payments = () => {
                     </div>
                 )}
 
-                {/* Payout Update Modal */}
-                {isModalOpen && selectedPayout && (
+                {/* Refund Update Modal */}
+                {isModalOpen && selectedRefund && (
                     <div className={styles.modalOverlay}>
                         <div className={styles.modalContent} style={{ maxWidth: '400px', width: '100%' }}>
-                            <h3>Update Payout Status</h3>
+                            <h3>Update Refund Status</h3>
                             <form onSubmit={handleUpdateStatus} style={{ textAlign: 'left', marginTop: '15px' }}>
                                 <div style={{ marginBottom: '15px' }}>
                                     <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Status</label>
@@ -305,7 +318,7 @@ const Payments = () => {
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="initiated">Initiated</option>
-                                        <option value="paid">Paid</option>
+                                        <option value="processed">Processed</option>
                                         <option value="rejected">Rejected</option>
                                     </select>
                                 </div>
@@ -353,4 +366,4 @@ const Payments = () => {
     );
 };
 
-export default Payments;
+export default Refunds;

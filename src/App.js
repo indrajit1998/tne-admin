@@ -13,6 +13,7 @@ import Management from "./pages/Management";
 import ManagementCreate from "./pages/ManagementCreate";
 import ManagementView from "./pages/ManagementView";
 import Payments from "./pages/Payments";
+import Refunds from "./pages/Refunds";
 import Support from "./pages/Support";
 import UserDetails from "./pages/UserDetails";
 import UserManagement from "./pages/UserManagement";
@@ -32,6 +33,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/driver-management" element={<DriverManagement />} />
         <Route path="/payments" element={<Payments />} />
+        <Route path="/refunds" element={<Refunds />} />
         <Route path="/user-management" element={<UserManagement />} />
         <Route path="/management" element={<Management />} />
         <Route path="/user-details" element={<UserDetails />} />

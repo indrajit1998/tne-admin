@@ -232,13 +232,13 @@ const SenderReport = () => {
   }
 };
 
- const handleRefundConsignment = async(consignmentId) => {
+ const handleRefundConsignment = async(consignmentId, senderPhone) => {
   
 
   // Ask user for refund amount
   const refundAmount = prompt(`Enter refund amount for consignmentId ${consignmentId}:`);
   if (!refundAmount) {
-    alert("Refund cancelled. No amount entered.");
+    alert("Refund action cancelled. No amount entered.");
     return;
   }
    const refundAmountPaise = parseInt(refundAmount) * 100;
@@ -256,20 +256,23 @@ const SenderReport = () => {
       const alertBox = document.createElement("div");
       alertBox.innerHTML = `
     <div style="background-color: #ffffff; border: 2px solid #4caf50; border-radius: 8px; padding: 15px 25px; width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-family: Arial, sans-serif; color: #333; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; text-align: center;">
-      <h3 style="margin-top: 0; color: #4caf50;">Refund Initiated</h3>
+      <h3 style="margin-top: 0; color: #4caf50;">Refund Accepted</h3>
       <p>Consignment ID: <b>${consignmentId}</b></p>
       <p>Refund Amount: <b>₹${refundAmount}</b></p>
       <button id="closeAlertBtn" style="padding: 5px 10px; margin-top: 10px; background-color: #4caf50; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer;">OK</button>
     </div>`;
       document.body.appendChild(alertBox);
-      document.getElementById("closeAlertBtn").onclick = () =>
+      document.getElementById("closeAlertBtn").onclick = async () => {
         alertBox.remove();
+        // Redirect to refunds page with the refund ID
+        window.location.href = `/refunds?openRefund=${data.refund.id}`;
+      };
     } else {
       alert(`Refund failed: ${data.message}`);
     }
-  } catch (err) {
-    console.error(err);
-    alert("Error initiating refund.");
+  } catch (error) {
+    console.error("Error accepting refund:", error);
+    alert("Error accepting refund.");
   }
 };
 
@@ -508,9 +511,9 @@ const SenderReport = () => {
                                       {showRefund && (
                                         <button
                                           style={refundButtonStyle}
-                                          onClick={() => handleRefundConsignment(consignment.consignmentId)}
+                                          onClick={() => handleRefundConsignment(consignment.consignmentId, sender.phone)}
                                         >
-                                          Refund
+                                          Accept Refund
                                         </button>
                                       )}
                                     </td>
