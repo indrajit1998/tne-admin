@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api.timestringssystem.com/",
-  // baseURL: process.env.REACT_APP_API_URL,
+  // baseURL: "https://api.timestringssystem.com/",
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
