@@ -63,58 +63,25 @@ const Payments = () => {
 
     const handleExport = async () => {
         try {
-            const statusParam = statusFilter ? `&status=${statusFilter}` : "";
-            // Fetch the JSON list of payouts instead of CSV blob
-            const response = await api.get(`/api/v1/admin/payouts?limit=10000${statusParam}`, {
+            const statusParam = statusFilter ? `?status=${statusFilter}` : '';
+            const response = await api.get(`/api/v1/admin/payouts/export${statusParam}`, {
+                responseType: 'blob',
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
-            const payoutsData = response.data?.data?.data || [];
-            
-            // Build the data array for XLSX according to IDFC BLKPAY format
-            const headers = [
-                'Beneficiary Name', 'Beneficiary Account Number', 'IFSC', 'Transaction Type',
-                'Debit Account Number', 'Transaction Date', 'Amount', 'Currency',
-                'Beneficiary Email ID', 'Remarks', 'Custom Header – 1', 'Custom Header – 2',
-                'Custom Header – 3', 'Custom Header – 4', 'Custom Header – 5'
-            ];
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
             
             const date = new Date();
-            const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-            
-            const rows = payoutsData.map(payout => {
-                const bankName = payout.bankDetails?.bankName?.toLowerCase() || '';
-                const isIdfc = bankName.includes("idfc");
-                // Rule: If IDFC then IFT, otherwise NEFT (RTGS if amount > 2L)
-                const txnType = isIdfc ? "IFT" : (payout.amount >= 200000 ? "RTGS" : "NEFT");
-
-                return [
-                    payout.bankDetails?.accountHolderName || payout.user?.firstName || '',
-                    payout.bankDetails?.accountNumber || '',
-                    payout.bankDetails?.ifscCode || '',
-                    txnType,
-                    '', // Debit Account Number (to be filled by admin)
-                    formattedDate,
-                    payout.amount || 0,
-                    'INR',
-                    payout.user?.email || '',
-                    `Payout ${payout._id}`,
-                    '', '', '', '', ''
-                ];
-            });
-
-            const worksheetData = [headers, ...rows];
-            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "BulkPay");
-
-            // Generate filename BLKPAY_YYYYMMDD.xlsx
             const yyyy = date.getFullYear();
             const mm = String(date.getMonth() + 1).padStart(2, '0');
             const dd = String(date.getDate()).padStart(2, '0');
             const fileName = `BLKPAY_${yyyy}${mm}${dd}.xlsx`;
-
-            XLSX.writeFile(workbook, fileName);
             
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
         } catch (error) {
             console.error('Error exporting payouts:', error);
             alert('Failed to export payouts.');
