@@ -78,24 +78,6 @@ const Payments = () => {
                 'Custom Header – 3', 'Custom Header – 4', 'Custom Header – 5'
             ];
             
-            const instructions = [
-                'Enter beneficiary name.\r\nMANDATORY',
-                'Enter beneficiary account number. \r\nThis can be IDFC FIRST Bank account or other Bank account.\r\nMANDATORY',
-                'Enter beneficiary bank IFSC code. Required only for Inter bank (NEFT/RTGS) payment.',
-                'Enter payment type:\r\nIFT - Within Bank payment\r\nNEFT - Inter-Bank(NEFT) payment\r\nRTGS - Inter-Bank(RTGS) payment\r\nMANDATORY',
-                'Enter debit account number. This should be IDFC FIRST Bank account only. User should have access to do transaction on this account',
-                "Enter transaction value date. Should be today's date or future date.\r\nMANDATORY\r\nDD/MM/YYYY format",
-                'Enter payment amount.\r\nMANDATORY',
-                'Enter transaction currency. Should be INR only.\r\nMANDATORY',
-                'Enter beneficiary email id\r\nOPTIONAL',
-                'Enter remarks\r\nOPTIONAL',
-                'Credit Advice:\r\nEnter Custom Info -1\r\nNote: Header label is editable in Row 1\r\nOPTIONAL',
-                'Credit Advice:\r\nEnter Custom Info -2\r\nNote: Header label is editable in Row 1\r\nOPTIONAL',
-                'Credit Advice:\r\nEnter Custom Info -3\r\nNote: Header label is editable in Row 1\r\nOPTIONAL',
-                'Credit Advice:\r\nEnter Custom Info -4\r\nNote: Header label is editable in Row 1\r\nOPTIONAL',
-                'Credit Advice:\r\nEnter Custom Info -5\r\nNote: Header label is editable in Row 1\r\nOPTIONAL'
-            ];
-
             const date = new Date();
             const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
             
@@ -120,7 +102,7 @@ const Payments = () => {
                 ];
             });
 
-            const worksheetData = [headers, instructions, ...rows];
+            const worksheetData = [headers, ...rows];
             const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "BulkPay");
