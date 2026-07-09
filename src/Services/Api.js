@@ -1,113 +1,128 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  //baseURL: 'https://api.timestringssystem.com', 
-  baseURL: process.env.REACT_APP_API_URL, 
+  baseURL: process.env.PROD
+    ? "https://api.timestringssystem.com"
+    : "http://localhost:4000/",
+  // baseURL: process.env.REACT_APP_API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-}, error => {
-  return Promise.reject(error);
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 // API helper functions for reports
 export const getTravelerReport = async (page = 1, limit = 30) => {
   try {
-    const response = await api.get(`api/v1/admin/getTravellerReport?page=${page}&limit=${limit}`);
+    const response = await api.get(
+      `api/v1/admin/getTravellerReport?page=${page}&limit=${limit}`,
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching traveler report:', error);
+    console.error("Error fetching traveler report:", error);
     throw error;
   }
 };
 
 export const getSenderReport = async (page = 1, limit = 30) => {
   try {
-    const response = await api.get(`api/v1/admin/getSenderReport?page=${page}&limit=${limit}`);
-    console.log("responseof sender report",response);
+    const response = await api.get(
+      `api/v1/admin/getSenderReport?page=${page}&limit=${limit}`,
+    );
+    console.log("responseof sender report", response);
     return response.data;
   } catch (error) {
-    console.error('Error fetching sender report:', error);
+    console.error("Error fetching sender report:", error);
     throw error;
   }
 };
 
 export const getSenderConsignmentDetails = async (senderPhone) => {
   try {
-    const response = await api.get(`api/v1/admin/sender-consignment-details/${senderPhone}`);
-    console.log("response of sender consignment details",response);
+    const response = await api.get(
+      `api/v1/admin/sender-consignment-details/${senderPhone}`,
+    );
+    console.log("response of sender consignment details", response);
     return response.data;
   } catch (error) {
-    console.error('Error fetching sender consignment details:', error);
+    console.error("Error fetching sender consignment details:", error);
     throw error;
   }
 };
 
 export const getTravelerConsignmentDetails = async (travelerPhone) => {
   try {
-    const response = await api.get(`api/v1/admin/traveler-consignment-details/${travelerPhone}`);
-    console.log("response of traveler consignment details",response);
+    const response = await api.get(
+      `api/v1/admin/traveler-consignment-details/${travelerPhone}`,
+    );
+    console.log("response of traveler consignment details", response);
     return response.data;
   } catch (error) {
-    console.error('Error fetching traveler consignment details:', error);
+    console.error("Error fetching traveler consignment details:", error);
     throw error;
   }
 };
 
 export const cancelConsignmentById = async (consignmentId) => {
-    try {
-        const response = await api.post(`/api/v1/admin/cancelConsignment/${consignmentId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error cancelling consignment:', error);
-        throw error; // Rethrow to be caught in the component
-    }
+  try {
+    const response = await api.post(
+      `/api/v1/admin/cancelConsignment/${consignmentId}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error cancelling consignment:", error);
+    throw error; // Rethrow to be caught in the component
+  }
 };
 export const cancelTravelById = async (travelId) => {
-    try {
-        const response = await api.post(`/api/v1/admin/cancelTravel/${travelId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error cancelling consignment:', error);
-        throw error; // Rethrow to be caught in the component
-    }
+  try {
+    const response = await api.post(`/api/v1/admin/cancelTravel/${travelId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error cancelling consignment:", error);
+    throw error; // Rethrow to be caught in the component
+  }
 };
 
 export const getConsolidatedReportData = async () => {
   try {
-    const response = await api.get('/api/v1/admin/getConsolidateConsignment');
-    console.log("consolidated data",response);
+    const response = await api.get("/api/v1/admin/getConsolidateConsignment");
+    console.log("consolidated data", response);
     return response.data;
   } catch (error) {
-    console.error('Error fetching consignment consolidated report:', error);
+    console.error("Error fetching consignment consolidated report:", error);
     throw error;
   }
 };
 
 export const getBusinessIntelligenceReport = async () => {
   try {
-    const response = await api.get('api/v1/report/business-intelligence');
+    const response = await api.get("api/v1/report/business-intelligence");
     return response.data;
   } catch (error) {
-    console.error('Error fetching business intelligence report:', error);
+    console.error("Error fetching business intelligence report:", error);
     throw error;
   }
 };
 
 export const getTravelDetailsReport = async () => {
   try {
-    const response = await api.get('api/v1/report/travel-details');
+    const response = await api.get("api/v1/report/travel-details");
     return response.data;
   } catch (error) {
-    console.error('Error fetching travel details report:', error);
+    console.error("Error fetching travel details report:", error);
     throw error;
   }
 };
