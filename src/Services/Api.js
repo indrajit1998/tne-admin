@@ -1,9 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.PROD
-    ? "https://api.timestringssystem.com"
-    : "http://localhost:4000/",
+  baseURL: "https://api.timestringssystem.com/",
   // baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "Content-Type": "application/json",
