@@ -8,238 +8,255 @@
 
 .dashboardContainer {
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
   background-color: #f5f5f5;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(to right, #ffffff, #f7f7f7);
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.userIcon {
-  display: flex;
-  align-items: center;
-  font-size: 1.2em;
-  cursor: pointer;
-  position: relative;
-}
-
-.searchBarInput {
-  padding: 10px 15px;
-  border-radius: 30px;
-  border: 1px solid #cccccc;
-  outline: none;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-}
-
-.searchBarInput:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
-}
-
-.sidebar {
-  width: 250px;
-  background: #252525;
-  border: #ffffff;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  margin-right: 0;
 }
 
 .dashboardContent {
   flex: 1;
-  overflow-y: auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   background-color: #f5f5f5;
-  padding: 10px;
+  overflow-y: auto;
 }
 
 .topSection {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .card {
   background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #dddddd;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  flex: 1;
+  padding: 18px 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: all 0.3s ease;
+  text-align: center;
+  transition: all 0.25s ease;
+  min-height: 100px;
 }
 
 .card:hover {
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
 }
 
 .card h3 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: #333;
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .card p {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   margin: 0;
-  color: #444;
-}
-
-.chartSection {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.customTooltip {
-  background-color: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  padding: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.customTooltipLabel {
-  font-weight: bold;
-  color: #333;
-}
-
-.customTooltipIntro {
-  color: #666;
+  color: #1e293b;
 }
 
 .transactionSection {
   background: #ffffff;
+  margin: 0 20px 20px 20px;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.transactionSection h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.transactionsWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .transactions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-template-columns: minmax(160px, 1.5fr) minmax(180px, 1.5fr) minmax(110px, 1fr) minmax(110px, 1fr);
+  gap: 12px;
   font-size: 14px;
-  color: #333;
+  color: #334155;
+  min-width: 600px;
 }
 
 .transactionHeader {
   display: contents;
-  font-weight: 600;
-  color: #555;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 12.5px;
+}
+
+.transactionHeader p {
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+  margin: 0;
 }
 
 .transactionItem {
   display: contents;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
 }
 
 .transactionItem p {
   margin: 0;
+  padding: 12px 0;
   text-align: left;
-}
-
-.dropdownMenu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  z-index: 1000;
+  border-bottom: 1px solid #f1f5f9;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
 }
 
-.dropdownMenu p {
-  margin: 0;
-  padding: 10px;
-  cursor: pointer;
+.noTransactions {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
+  font-size: 15px;
 }
 
-.dropdownMenu p:hover {
-  background-color: #f5f5f5;
+/* Status colors */
+.paid, .success, .delivered, .accepted {
+  color: #16a34a !important;
+  font-weight: 600;
+}
+
+.pending {
+  color: #d97706 !important;
+  font-weight: 600;
+}
+
+.failed, .cancelled, .rejected {
+  color: #dc2626 !important;
+  font-weight: 600;
 }
 
 .pagination {
   display: flex;
   justify-content: flex-end;
-  padding: 10px 20px 20px 10px;
+  align-items: center;
+  padding: 10px 20px 30px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .paginationButtons {
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .paginationButton {
-  padding: 5px 10px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
   margin: 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: var(--white);
-  color: var(--dark-gray);
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #334155;
+  font-size: 13.5px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-.paginationButton:hover,
+.paginationButton:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
 .paginationButtonActive {
-  background-color: var(--primary-color);
-  color: var(--white);
+  background-color: #043075 !important;
+  color: #ffffff !important;
+  border-color: #043075 !important;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(4, 48, 117, 0.25);
 }
 
-/* Responsive styles */
+.paginationButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Tablet view adjustments */
+@media (max-width: 1024px) {
+  .topSection {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .transactionSection {
+    margin: 0 14px 14px 14px;
+    padding: 16px;
+  }
+
+  .card p {
+    font-size: 20px;
+  }
+}
+
+/* Small screens & tablets */
 @media (max-width: 768px) {
   .dashboardContainer {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-
-  .dashboardContent {
-    padding: 10px;
+    flex-direction: row;
   }
 
   .topSection {
-    flex-direction: column;
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    padding: 10px;
+    gap: 8px;
   }
 
-  .card {
-    margin-bottom: 10px;
+  .transactionSection {
+    margin: 0 10px 10px 10px;
+    padding: 12px;
+  }
+}
+
+/* 4K and Ultra-wide Displays */
+@media (min-width: 1920px) {
+  .topSection {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 28px;
   }
 
-  .transactions {
-    grid-template-columns: repeat(2, 1fr);
+  .card p {
+    font-size: 32px;
+  }
+
+  .card h3 {
+    font-size: 15px;
+  }
+
+  .transactionSection {
+    margin: 0 28px 28px 28px;
+    padding: 28px;
   }
 }

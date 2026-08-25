@@ -92,35 +92,37 @@ const Management = () => {
           {loading ? (
             <div className={styles.loader}>Loading...</div>
           ) : (
-            <table id='admin-table' className={styles.table}>
-              <thead>
-                <tr>
-                  <th className={styles.tableTh}>Admin Name</th>
-                  <th className={styles.tableTh}>Role</th>
-                  <th className={styles.tableTh}>Phone Number</th>
-                  <th className={styles.tableTh}>Email</th>
-                  <th className={styles.tableTh}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {admins.map((admin) => (
-                  <tr key={admin._id} className={styles.tableTr}>
-                    <td className={styles.tableTd}>{admin.name}</td>
-                    <td className={styles.tableTd}>{admin.role}</td>
-                    <td className={styles.tableTd}>{admin.phoneNumber}</td>
-                    <td className={styles.tableTd}>{admin.email}</td>
-                    <td className={styles.tableTd}>
-                      <span
-                        className={styles.viewIcon}
-                        onClick={() => handleViewClick(admin._id)}
-                      >
-                        View
-                      </span>
-                    </td>
+            <div className={styles.tableResponsive}>
+              <table id='admin-table' className={styles.table}>
+                <thead>
+                  <tr>
+                    <th className={styles.tableTh}>Admin Name</th>
+                    <th className={styles.tableTh}>Role</th>
+                    <th className={styles.tableTh}>Phone Number</th>
+                    <th className={styles.tableTh}>Email</th>
+                    <th className={styles.tableTh}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {admins.map((admin) => (
+                    <tr key={admin._id} className={styles.tableTr}>
+                      <td className={styles.tableTd}>{admin.name}</td>
+                      <td className={styles.tableTd}>{admin.role}</td>
+                      <td className={styles.tableTd}>{admin.phoneNumber}</td>
+                      <td className={styles.tableTd}>{admin.email}</td>
+                      <td className={styles.tableTd}>
+                        <span
+                          className={styles.viewIcon}
+                          onClick={() => handleViewClick(admin._id)}
+                        >
+                          View
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>

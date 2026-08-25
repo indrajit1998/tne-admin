@@ -140,50 +140,52 @@ const DriverManagement = () => {
           </div>
 
           {/* Table */}
-          <table>
-            <thead>
-              <tr>
-                <th>Driver</th>
-                <th>License</th>
-                <th>Status</th>
-                <th>Pay Rate</th>
-                <th>Distance</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.map((driver) => (
-                <tr key={driver.id}>
-                  <td>
-                    {driver.name}
-                    <br />
-                    <small>{driver.email}</small>
-                  </td>
-                  <td>
-                    {driver.license}
-                    <br />
-                    <small>Exp: {driver.licenseExp}</small>
-                  </td>
-                  <td>
-                    <span
-                      className={`status ${
-                        driver.status.toLowerCase() === "active"
-                          ? "active"
-                          : "inactive"
-                      }`}
-                    >
-                      {driver.status}
-                    </span>
-                  </td>
-                  <td>{driver.payRate}</td>
-                  <td>{driver.distance}</td>
-                  <td>
-                    <span className="edit-icon">✎</span>
-                  </td>
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Driver</th>
+                  <th>License</th>
+                  <th>Status</th>
+                  <th>Pay Rate</th>
+                  <th>Distance</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {drivers.map((driver) => (
+                  <tr key={driver.id}>
+                    <td>
+                      {driver.name}
+                      <br />
+                      <small>{driver.email}</small>
+                    </td>
+                    <td>
+                      {driver.license}
+                      <br />
+                      <small>Exp: {driver.licenseExp}</small>
+                    </td>
+                    <td>
+                      <span
+                        className={`status ${
+                          driver.status.toLowerCase() === "active"
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        {driver.status}
+                      </span>
+                    </td>
+                    <td>{driver.payRate}</td>
+                    <td>{driver.distance}</td>
+                    <td>
+                      <span className="edit-icon">✎</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </fieldset>
 
         {/* Pagination */}
