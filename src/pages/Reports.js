@@ -11,9 +11,9 @@ const Reports = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <div className="dashboard-container" style={{ display: 'flex', height: '100vh', width: '100vw' }}>
+    <div className="dashboard-container" style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
       <Sidebar />
-      <div className="dashboard-content" style={{ flex: 1, overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
+      <div className="dashboard-content" style={{ flex: 1, minWidth: 0, overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
         {/* <Header onSearch={setSearchQuery} /> */}
         <div className="reports-container">
           <div className="reports-header">

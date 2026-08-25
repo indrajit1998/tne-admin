@@ -1,132 +1,209 @@
 .header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  /* background-color: #f8f9fa;  */
-  font-family: Arial, sans-serif;
-  border-radius: 8px;
-  position: relative;
-  top:0;
-  
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 16px;
 }
 
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .modalContent {
   background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   text-align: left;
 }
 
-.modalContent button {
-  margin-top: 1rem;
-  padding: 8px 16px;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.modalContent h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #1e293b;
+  font-size: 20px;
+  font-weight: 700;
 }
 
+.modalContent p {
+  margin: 8px 0;
+  color: #475569;
+  font-size: 14px;
+}
+
+.modalContent button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.modalContent button:hover {
+  background-color: #004494;
+}
 
 .userIcon {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .userIcon h4 {
   margin: 0;
-  font-size: 18px;
-  color: #333; /* Dark text for readability */
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
 }
 
 .userIcon p {
-  margin: 0;
+  margin: 2px 0 0 0;
   font-size: 12px;
   font-weight: 400;
-  color: #666; /* Subtle text for secondary information */
+  color: #64748b;
+  white-space: nowrap;
 }
 
 .searchBar {
-  flex-grow: 1;
-  margin: 0 20px;
+  flex: 1;
+  max-width: 450px;
   display: flex;
-  justify-content: center;
+  align-items: center;
 }
 
 .searchBar input {
   width: 100%;
-  max-width: 400px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  color: #333;
+  padding: 8px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 13.5px;
+  color: #1e293b;
+  background-color: #f9fafb;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.searchBar input:focus {
+  background-color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .searchBar input::placeholder {
-  color: #aaa; /* Subtle placeholder text */
+  color: #9ca3af;
 }
 
 .userSection {
   display: flex;
   align-items: center;
+  gap: 10px;
   position: relative;
   cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
 }
 
 .userSection p {
-  margin-left: 10px;
+  margin: 0;
   font-size: 14px;
-  color: #333;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
 }
 
 .userSection .dropdownMenu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 10px);
   right: 0;
   background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   z-index: 1000;
-  width: 150px;
-  padding: 10px 0;
+  width: 160px;
+  padding: 6px 0;
 }
 
 .userSection .dropdownMenu p {
   margin: 0;
-  padding: 10px 15px;
-  font-size: 14px;
-  color: #333;
-  transition: background-color 0.3s ease;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  color: #334155;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
 }
 
 .userSection .dropdownMenu p:hover {
-  background-color: #f1f1f1;
+  background-color: #f1f5f9;
+  color: #0056b3;
 }
 
-.userSection .dropdownMenu a {
-  text-decoration: none;
-  color: #333;
+/* Tablet & Mobile Screens */
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .userIcon h4 {
+    font-size: 14px;
+  }
+
+  .userIcon p {
+    display: none;
+  }
+
+  .userSection p {
+    display: none;
+  }
 }
 
-.userSection .dropdownMenu a:hover {
-  color: #0056b3; /* Matches the app's primary color */
+/* Large Screens */
+@media (min-width: 1920px) {
+  .header {
+    padding: 16px 32px;
+  }
+
+  .userIcon h4 {
+    font-size: 18px;
+  }
+
+  .searchBar {
+    max-width: 600px;
+  }
+
+  .searchBar input {
+    padding: 10px 18px;
+    font-size: 15px;
+  }
 }

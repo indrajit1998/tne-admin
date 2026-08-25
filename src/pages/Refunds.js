@@ -199,75 +199,77 @@ const Refunds = () => {
                 {loading ? (
                     <div className={styles.loader}>Loading Refunds...</div>
                 ) : (
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>User (Sender)</th>
-                                <th>Phone / Email</th>
-                                <th>Bank Details</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Comment</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredRefunds.length > 0 ? (
-                                filteredRefunds.map((refund) => (
-                                    <tr key={refund._id} className={styles.tableTr}>
-                                        <td>
-                                            {refund.user ? `${refund.user.firstName || ''} ${refund.user.lastName || ''}`.trim() : 'N/A'}
-                                        </td>
-                                        <td>
-                                            <div>{refund.user?.phoneNumber || 'N/A'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{refund.user?.email || ''}</div>
-                                        </td>
-                                        <td>
-                                            {refund.bankDetails ? (
-                                                <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
-                                                    <div><strong>Holder:</strong> {refund.bankDetails.accountHolderName || 'N/A'}</div>
-                                                    <div><strong>Bank:</strong> {refund.bankDetails.bankName || 'N/A'}</div>
-                                                    <div><strong>A/C:</strong> {refund.bankDetails.accountNumber || 'N/A'}</div>
-                                                    <div><strong>IFSC:</strong> {refund.bankDetails.ifscCode || 'N/A'}</div>
-                                                </div>
-                                            ) : 'N/A'}
-                                        </td>
-                                        <td><strong>₹{refund.amount}</strong></td>
-                                        <td>
-                                            <span style={{
-                                                backgroundColor: getStatusColor(refund.status),
-                                                color: '#fff',
-                                                padding: '4px 8px',
-                                                borderRadius: '12px',
-                                                fontSize: '0.8rem',
-                                                fontWeight: 'bold',
-                                                textTransform: 'uppercase'
-                                            }}>
-                                                {refund.status}
-                                            </span>
-                                        </td>
-                                        <td>{refund.comment || '-'}</td>
-                                        <td>
-                                            <button
-                                                className={styles.downloadButton}
-                                                style={{ padding: '4px 8px', fontSize: '0.8rem' }}
-                                                onClick={() => openUpdateModal(refund)}
-                                            >
-                                                Update Status
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
+                    <div className={styles.tableResponsive}>
+                        <table className={styles.table}>
+                            <thead>
                                 <tr>
-                                    <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No refunds found.</td>
+                                    <th>User (Sender)</th>
+                                    <th>Phone / Email</th>
+                                    <th>Bank Details</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                    <th>Actions</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filteredRefunds.length > 0 ? (
+                                    filteredRefunds.map((refund) => (
+                                        <tr key={refund._id} className={styles.tableTr}>
+                                            <td>
+                                                {refund.user ? `${refund.user.firstName || ''} ${refund.user.lastName || ''}`.trim() : 'N/A'}
+                                            </td>
+                                            <td>
+                                                <div>{refund.user?.phoneNumber || 'N/A'}</div>
+                                                <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{refund.user?.email || ''}</div>
+                                            </td>
+                                            <td>
+                                                {refund.bankDetails ? (
+                                                    <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
+                                                        <div><strong>Holder:</strong> {refund.bankDetails.accountHolderName || 'N/A'}</div>
+                                                        <div><strong>Bank:</strong> {refund.bankDetails.bankName || 'N/A'}</div>
+                                                        <div><strong>A/C:</strong> {refund.bankDetails.accountNumber || 'N/A'}</div>
+                                                        <div><strong>IFSC:</strong> {refund.bankDetails.ifscCode || 'N/A'}</div>
+                                                    </div>
+                                                ) : 'N/A'}
+                                            </td>
+                                            <td><strong>₹{refund.amount}</strong></td>
+                                            <td>
+                                                <span style={{
+                                                    backgroundColor: getStatusColor(refund.status),
+                                                    color: '#fff',
+                                                    padding: '4px 8px',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.8rem',
+                                                    fontWeight: 'bold',
+                                                    textTransform: 'uppercase'
+                                                }}>
+                                                    {refund.status}
+                                                </span>
+                                            </td>
+                                            <td>{refund.comment || '-'}</td>
+                                            <td>
+                                                <button
+                                                    className={styles.downloadButton}
+                                                    style={{ padding: '4px 8px', fontSize: '0.8rem', minWidth: 'auto', width: 'auto' }}
+                                                    onClick={() => openUpdateModal(refund)}
+                                                >
+                                                    Update Status
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No refunds found.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
-                {totalPages > 1 && (
+                {filteredRefunds.length > 0 && (
                     <div className={styles.pagination}>
                         <div className={styles.paginationButtons}>
                             <button
@@ -277,7 +279,7 @@ const Refunds = () => {
                             >
                                 «
                             </button>
-                            {Array.from({ length: totalPages }, (_, i) => (
+                            {Array.from({ length: totalPages || 1 }, (_, i) => (
                                 <button
                                     key={i}
                                     className={`${styles.paginationButton} ${currentPage === i + 1 ? styles.paginationButtonActive : ""}`}
@@ -288,8 +290,8 @@ const Refunds = () => {
                             ))}
                             <button
                                 className={styles.paginationButton}
-                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                                disabled={currentPage >= totalPages}
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages || 1))}
+                                disabled={currentPage >= (totalPages || 1)}
                             >
                                 »
                             </button>
