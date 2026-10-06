@@ -193,75 +193,77 @@ const Payments = () => {
                 {loading ? (
                     <div className={styles.loader}>Loading Payouts...</div>
                 ) : (
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Phone / Email</th>
-                                <th>Bank Details</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Comment</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredPayouts.length > 0 ? (
-                                filteredPayouts.map((payout) => (
-                                    <tr key={payout._id} className={styles.tableTr}>
-                                        <td>
-                                            {payout.user ? `${payout.user.firstName || ''} ${payout.user.lastName || ''}`.trim() : 'N/A'}
-                                        </td>
-                                        <td>
-                                            <div>{payout.user?.phoneNumber || 'N/A'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{payout.user?.email || ''}</div>
-                                        </td>
-                                        <td>
-                                            {payout.bankDetails ? (
-                                                <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
-                                                    <div><strong>Holder:</strong> {payout.bankDetails.accountHolderName || 'N/A'}</div>
-                                                    <div><strong>Bank:</strong> {payout.bankDetails.bankName || 'N/A'}</div>
-                                                    <div><strong>A/C:</strong> {payout.bankDetails.accountNumber || 'N/A'}</div>
-                                                    <div><strong>IFSC:</strong> {payout.bankDetails.ifscCode || 'N/A'}</div>
-                                                </div>
-                                            ) : 'N/A'}
-                                        </td>
-                                        <td><strong>₹{payout.amount}</strong></td>
-                                        <td>
-                                            <span style={{
-                                                backgroundColor: getStatusColor(payout.status),
-                                                color: '#fff',
-                                                padding: '4px 8px',
-                                                borderRadius: '12px',
-                                                fontSize: '0.8rem',
-                                                fontWeight: 'bold',
-                                                textTransform: 'uppercase'
-                                            }}>
-                                                {payout.status}
-                                            </span>
-                                        </td>
-                                        <td>{payout.comment || '-'}</td>
-                                        <td>
-                                            <button
-                                                className={styles.downloadButton}
-                                                style={{ padding: '4px 8px', fontSize: '0.8rem' }}
-                                                onClick={() => openUpdateModal(payout)}
-                                            >
-                                                Update Status
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
+                    <div className={styles.tableResponsive}>
+                        <table className={styles.table}>
+                            <thead>
                                 <tr>
-                                    <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No payouts found.</td>
+                                    <th>User</th>
+                                    <th>Phone / Email</th>
+                                    <th>Bank Details</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Comment</th>
+                                    <th>Actions</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filteredPayouts.length > 0 ? (
+                                    filteredPayouts.map((payout) => (
+                                        <tr key={payout._id} className={styles.tableTr}>
+                                            <td>
+                                                {payout.user ? `${payout.user.firstName || ''} ${payout.user.lastName || ''}`.trim() : 'N/A'}
+                                            </td>
+                                            <td>
+                                                <div>{payout.user?.phoneNumber || 'N/A'}</div>
+                                                <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{payout.user?.email || ''}</div>
+                                            </td>
+                                            <td>
+                                                {payout.bankDetails ? (
+                                                    <div style={{ fontSize: '0.85rem', textAlign: 'left' }}>
+                                                        <div><strong>Holder:</strong> {payout.bankDetails.accountHolderName || 'N/A'}</div>
+                                                        <div><strong>Bank:</strong> {payout.bankDetails.bankName || 'N/A'}</div>
+                                                        <div><strong>A/C:</strong> {payout.bankDetails.accountNumber || 'N/A'}</div>
+                                                        <div><strong>IFSC:</strong> {payout.bankDetails.ifscCode || 'N/A'}</div>
+                                                    </div>
+                                                ) : 'N/A'}
+                                            </td>
+                                            <td><strong>₹{payout.amount}</strong></td>
+                                            <td>
+                                                <span style={{
+                                                    backgroundColor: getStatusColor(payout.status),
+                                                    color: '#fff',
+                                                    padding: '4px 8px',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.8rem',
+                                                    fontWeight: 'bold',
+                                                    textTransform: 'uppercase'
+                                                }}>
+                                                    {payout.status}
+                                                </span>
+                                            </td>
+                                            <td>{payout.comment || '-'}</td>
+                                            <td>
+                                                <button
+                                                    className={styles.downloadButton}
+                                                    style={{ padding: '4px 8px', fontSize: '0.8rem', minWidth: 'auto', width: 'auto' }}
+                                                    onClick={() => openUpdateModal(payout)}
+                                                >
+                                                    Update Status
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No payouts found.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
-                {totalPages > 1 && (
+                {filteredPayouts.length > 0 && (
                     <div className={styles.pagination}>
                         <div className={styles.paginationButtons}>
                             <button
@@ -271,7 +273,7 @@ const Payments = () => {
                             >
                                 «
                             </button>
-                            {Array.from({ length: totalPages }, (_, i) => (
+                            {Array.from({ length: totalPages || 1 }, (_, i) => (
                                 <button
                                     key={i}
                                     className={`${styles.paginationButton} ${currentPage === i + 1 ? styles.paginationButtonActive : ""}`}
@@ -282,8 +284,8 @@ const Payments = () => {
                             ))}
                             <button
                                 className={styles.paginationButton}
-                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                                disabled={currentPage >= totalPages}
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages || 1))}
+                                disabled={currentPage >= (totalPages || 1)}
                             >
                                 »
                             </button>

@@ -11,9 +11,13 @@ const Header = ({ onSearch = () => {} }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const admin = localStorage.getItem("admin");
-    if (admin) {
-      setAdminDetails(JSON.parse(admin));
+    try {
+      const admin = localStorage.getItem("admin");
+      if (admin && admin !== "undefined" && admin !== "null") {
+        setAdminDetails(JSON.parse(admin));
+      }
+    } catch (e) {
+      console.warn("Failed to parse admin from localStorage:", e);
     }
   }, []);
   // console.log(adminDetails, "adminDetails");

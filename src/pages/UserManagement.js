@@ -136,37 +136,39 @@ const UserManagement = () => {
                 {loading ? (
                     <div className={styles.loader}>Loading...</div>
                 ) : (
-                    <table id="user-table" className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Phone Number</th>
-                                <th>Email</th>
-                                <th>Rating</th>
-                                <th>Status </th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user) => (
-                                <tr key={user._id} className={styles.tableTr}>
-                                    <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A'}</td>
-                                    <td>{user.phoneNumber || "N/A"}</td>
-                                    <td>{user.email || "N/A"}</td>
-                                    <td>
-                                        {user.rating ? user.rating.toFixed(1) : '0.0'}
-                                        {user.reviewCount ? ` (${user.reviewCount})` : ''}
-                                    </td>
-                                    <td>{(user.isKYCVerified)?"Verified":"Not Verified"}</td>
-                                    <td>
-                                        <button className={styles.actionButton} onClick={() => handleViewDetailsClick(user)}>
-                                            <span className={styles.editIcon}>👁️</span>
-                                        </button>
-                                    </td>
+                    <div className={styles.tableResponsive}>
+                        <table id="user-table" className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Phone Number</th>
+                                    <th>Email</th>
+                                    <th>Rating</th>
+                                    <th>Status </th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {users.map((user) => (
+                                    <tr key={user._id} className={styles.tableTr}>
+                                        <td>{`${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A'}</td>
+                                        <td>{user.phoneNumber || "N/A"}</td>
+                                        <td>{user.email || "N/A"}</td>
+                                        <td>
+                                            {user.rating ? user.rating.toFixed(1) : '0.0'}
+                                            {user.reviewCount ? ` (${user.reviewCount})` : ''}
+                                        </td>
+                                        <td>{(user.isKYCVerified)?"Verified":"Not Verified"}</td>
+                                        <td>
+                                            <button className={styles.actionButton} onClick={() => handleViewDetailsClick(user)}>
+                                                <span className={styles.editIcon}>👁️</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
                 <div className={styles.pagination}>

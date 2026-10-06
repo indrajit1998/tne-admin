@@ -104,11 +104,11 @@ const Dashboard = () => {
         <div className={styles.topSection}>
           <div className={styles.card}>
             <h3>Total Users</h3>
-            <p>{totalUsers}</p>
+            <p>{totalUsers ?? 0}</p>
           </div>
           <div className={styles.card}>
             <h3>Total Earnings</h3>
-            <p>₹{totalEarnings.toFixed(2)}</p>
+            <p>₹{Number(totalEarnings || 0).toFixed(2)}</p>
           </div>
           {allCards.map((card, idx) => (
             <div className={styles.card} key={idx}>
@@ -120,37 +120,39 @@ const Dashboard = () => {
 
         <div className={styles.transactionSection}>
           <h3>Recent Transactions</h3>
-          <div className={styles.transactions}>
-            <div className={styles.transactionHeader}>
-              <p>
-                <strong>Customer Name</strong>
-              </p>
-              <p>
-                <strong>Transaction ID</strong>
-              </p>
-              <p>
-                <strong>Status</strong>
-              </p>
-              <p>
-                <strong>Amount</strong>
-              </p>
+          <div className={styles.transactionsWrapper}>
+            <div className={styles.transactions}>
+              <div className={styles.transactionHeader}>
+                <p>
+                  <strong>Customer Name</strong>
+                </p>
+                <p>
+                  <strong>Transaction ID</strong>
+                </p>
+                <p>
+                  <strong>Status</strong>
+                </p>
+                <p>
+                  <strong>Amount</strong>
+                </p>
+              </div>
+              {transactionHistory.length > 0 ? (
+                transactionHistory.map((transaction) => (
+                  <div key={transaction._id} className={styles.transactionItem}>
+                    <p>{`${transaction.userId?.firstName || ""} ${
+                      transaction.userId?.lastName || "N/A"
+                    }`}</p>
+                    <p>{transaction.razorpayPaymentId || "N/A"}</p>
+                    <p className={styles[transaction.status]}>
+                      {transaction.status}
+                    </p>
+                    <p>₹{Number(transaction.amount || 0).toFixed(2)}</p>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.noTransactions}>No transactions found.</p>
+              )}
             </div>
-            {transactionHistory.length > 0 ? (
-              transactionHistory.map((transaction) => (
-                <div key={transaction._id} className={styles.transactionItem}>
-                  <p>{`${transaction.userId?.firstName || ""} ${
-                    transaction.userId?.lastName || "N/A"
-                  }`}</p>
-                  <p>{transaction.razorpayPaymentId || "N/A"}</p>
-                  <p className={styles[transaction.status]}>
-                    {transaction.status}
-                  </p>
-                  <p>₹{transaction.amount?.toFixed(2)}</p>
-                </div>
-              ))
-            ) : (
-              <p className={styles.noTransactions}>No transactions found.</p>
-            )}
           </div>
         </div>
 

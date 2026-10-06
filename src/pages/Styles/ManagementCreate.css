@@ -1,142 +1,172 @@
 .main-container {
-    display: flex;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  .content-wrapper {
-    flex-grow: 1;
-    display: flex;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f9f9f9;
+}
+
+.content-wrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.form-wrapper {
+  background-color: #fff;
+  padding: 28px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.form-wrapper h2 {
+  color: #1a73e8;
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.form-wrapper p {
+  color: #5f6368;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.user-info h3 {
+  color: #202124;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-pair {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.input-field {
+  flex: 1 1 240px;
+}
+
+.input-field label {
+  display: block;
+  color: #374151;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.input-field input,
+.input-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: #1e293b;
+  background-color: #fff;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+}
+
+.input-field select {
+  appearance: none;
+  padding-right: 35px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  background-color: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  color: #1a73e8;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.create-button {
+  padding: 10px 20px;
+  background-color: #1a73e8;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #f1f5f9;
+}
+
+.create-button:hover {
+  background-color: #1557b0;
+}
+
+@media (max-width: 768px) {
+  .main-container {
     flex-direction: column;
   }
-  
-  Sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 250px;
-    height: 100vh;
-    background-color: #f8f9fa;
-    z-index: 1000;
-  }
-  
-  Header {
-    position: sticky;
-    top: 0;
-    background-color: #fff;
-    z-index: 900;
-    border-bottom: 1px solid #ddd;
-    padding: 10px 20px;
-  }
-  
+
   .form-container {
-    flex-grow: 1;
-    overflow-y: auto;
-    background-color: #f9f9f9;
-    display: flex;
-    width: 100%;
+    padding: 14px;
   }
-  
+
   .form-wrapper {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    position: relative; /* Added for absolute positioning of buttons */
+    padding: 18px;
   }
-  
-  .form-wrapper h2 {
-    color: #1a73e8;
-    font-size: 24px;
-    margin-bottom: 5px;
-  }
-  
-  .form-wrapper p {
-    color: #5f6368;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-  
-  .user-info h3 {
-    color: #202124;
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
+
   .input-pair {
-    display: flex;
-    gap: 20px;
+    flex-direction: column;
   }
-  
+
   .input-field {
-    flex: 1;
-  }
-  
-  .input-field label {
-    display: block;
-    color: #5f6368;
-    font-size: 14px;
-    margin-bottom: 5px;
-  }
-  
-  .input-field input,
-  .input-field select {
-    width: 100%; /* Full width within the container */
-    padding: 10px; /* Slightly increased padding for better look */
-    border: 1px solid #dadce0;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-    min-width: 550px;
-  }
-  
-  .input-field select {
-    appearance: none;
-    padding-right: 35px; /* Increased padding to accommodate longer select */
-  }
-  
-  .full-width {
     width: 100%;
   }
-  
-  .button-group {
-    position: absolute;
-    bottom: 20px;
-    right: 30px; /* Align to right bottom with padding */
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 0; /* Remove default margin */
-  }
-  
-  .cancel-button {
-    padding: 10px 20px;
-    background-color: #fff;
-    border: 1px solid #dadce0;
-    border-radius: 4px;
-    color: #1a73e8;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  
-  .create-button {
-    padding: 10px 20px;
-    background-color: #1a73e8;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  
-  .cancel-button:hover,
-  .create-button:hover {
-    opacity: 0.9;
-  }
+}
